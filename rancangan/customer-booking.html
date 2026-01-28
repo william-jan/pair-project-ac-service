@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Booking</title>
+</head>
+<body>
+    <div class="container">
+        <div class="booking">
+            <div class="schedule-date">
+                <input type="hidden" name="customerId"> <!-- menyesuaikan id customer -->
+            </div>
+            <div class="schedule-date">
+                <label for="date">Schedule date</label>
+                <input type="date" name="">
+            </div>
+            <div class="address">
+                <label for="address">Address</label>
+                <textarea name="" id="" placeholder="type your address here"></textarea>
+            </div>
+            <div class="address">
+                <label for="address">Status</label>
+                <select name="">
+                    <option value="" disabled selected>Choose...</option>
+                    <!-- looping status di sini -->
+                     <option value="accepted">Accepted</option>
+                     <option value="pending">Pending</option>
+                     <option value="done">done</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
