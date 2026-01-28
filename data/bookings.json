@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "customerId": 1,
+    "scheduleDate": "2026-02-01T09:00:00",
+    "address": "Jl. Merdeka No.1, Medan",
+    "status": "pending"
+  },
+  {
+    "id": 2,
+    "customerId": 1,
+    "scheduleDate": "2026-02-03T14:00:00",
+    "address": "Jl. Sudirman No.10, Medan",
+    "status": "accepted"
+  },
+  {
+    "id": 3,
+    "customerId": 2,
+    "scheduleDate": "2026-02-05T10:30:00",
+    "address": "Jl. Gatot Subroto No.15, Medan",
+    "status": "pending"
+  },
+  {
+    "id": 4,
+    "customerId": 1,
+    "scheduleDate": "2026-02-06T13:00:00",
+    "address": "Jl. Pemuda No.20, Medan",
+    "status": "done"
+  },
+  {
+    "id": 5,
+    "customerId": 2,
+    "scheduleDate": "2026-02-08T08:00:00",
+    "address": "Jl. H.M. Yamin No.5, Medan",
+    "status": "accepted"
+  }
+]

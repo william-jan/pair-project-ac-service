@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Cuci AC",
+    "price": 150000,
+    "technicianId": 3
+  },
+  {
+    "id": 2,
+    "name": "Isi Freon",
+    "price": 250000,
+    "technicianId": 3
+  },
+  {
+    "id": 3,
+    "name": "Bongkar Pasang",
+    "price": 300000,
+    "technicianId": 4
+  },
+  {
+    "id": 4,
+    "name": "Cek Kebocoran",
+    "price": 100000,
+    "technicianId": 4
+  }
+]

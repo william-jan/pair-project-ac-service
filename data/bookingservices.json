@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "bookingId": 1,
+    "serviceId": 1,
+    "qty": 2
+  },
+  {
+    "id": 2,
+    "bookingId": 1,
+    "serviceId": 4,
+    "qty": 1
+  },
+  {
+    "id": 3,
+    "bookingId": 2,
+    "serviceId": 3,
+    "qty": 1
+  },
+  {
+    "id": 4,
+    "bookingId": 2,
+    "serviceId": 2,
+    "qty": 1
+  },
+  {
+    "id": 5,
+    "bookingId": 3,
+    "serviceId": 1,
+    "qty": 1
+  },
+  {
+    "id": 6,
+    "bookingId": 3,
+    "serviceId": 2,
+    "qty": 1
+  },
+  {
+    "id": 7,
+    "bookingId": 4,
+    "serviceId": 4,
+    "qty": 1
+  },
+  {
+    "id": 8,
+    "bookingId": 5,
+    "serviceId": 1,
+    "qty": 2
+  }
+]
