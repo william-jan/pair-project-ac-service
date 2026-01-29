@@ -10,7 +10,7 @@ router.post("/login", Controller.handleLogin);
 
 // REGISTER
 router.get("/register", Controller.showRegister);
-router.post("/register/customer", Controller.handleRegister);
+router.post("/register", Controller.handleRegister);
 
 // // LOGOUT
 router.get("/logout", Controller.handleLogout);
