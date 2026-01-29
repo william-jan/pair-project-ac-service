@@ -11,19 +11,19 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // 1 belong to 1 technician
-      models.Service.belongsTo(models.User, {
+      Service.belongsTo(models.User, {
         foreignKey: "technicianId"
       });
 
       // services N-N bookings
-      models.Service.belongsToMany(models.Booking, {
+      Service.belongsToMany(models.Booking, {
         through: models.BookingService,
         foreignKey: "serviceId",
         otherKey: "bookingId"
       });
 
       // for addition only 
-      models.Service.hasMany(models.BookingService, {
+      Service.hasMany(models.BookingService, {
         foreignKey: "serviceId"
       });
 

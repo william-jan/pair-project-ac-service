@@ -11,19 +11,19 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // booking dibuat langsung oleh customer
-      models.Booking.belongsTo(models.User, {
+      Booking.belongsTo(models.User, {
         foreignKey: "customerId"
       });
 
       // M-N ke Service via BookingService
-      models.Booking.belongsToMany(models.Service, {
+      Booking.belongsToMany(models.Service, {
         through: models.BookingService,
         foreignKey: "bookingId",
         otherKey: "serviceId"
       });
 
       
-      models.Booking.hasMany(models.BookingService, {
+      Booking.hasMany(models.BookingService, {
         foreignKey: "bookingId"
       });
 

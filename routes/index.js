@@ -13,11 +13,11 @@ router.get("/register", Controller.showRegister);
 router.post("/register/customer", Controller.handleRegister);
 
 // // LOGOUT
-// router.get("/logout", Controller.handleLogout);
+router.get("/logout", Controller.handleLogout);
 
 // // HOME
-// router.get("/customer", Controller.showHomeCustomer);
-// router.get("/technician", Controller.showHomeTechnician);
+router.get("/customer", Controller.showHomeCustomer);
+router.get("/technician", Controller.showHomeTechnician);
 
 // // CUSTOMER FLOW
 // router.get("/bookings/add", Controller.showAddBooking);

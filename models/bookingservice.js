@@ -12,11 +12,11 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       //table helper + quantity
 
-      models.BookingService.belongsTo(models.Booking, {
+      BookingService.belongsTo(models.Booking, {
         foreignKey: "bookingId"
       });
 
-      models.BookingService.belongsTo(models.Service, {
+      BookingService.belongsTo(models.Service, {
         foreignKey: "serviceId"
       });
     }

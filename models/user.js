@@ -14,17 +14,17 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
 
       // user 1-1 technicianprofiles
-      models.User.hasOne(models.TechnicianProfile, {
+      User.hasOne(models.TechnicianProfile, {
         foreignKey: "userId"
       });
 
       // user technician 1-N services
-      models.User.hasMany(models.Service, {
+      User.hasMany(models.Service, {
         foreignKey: "technicianId"
       });
 
       // user customer 1-N bookings
-      models.User.hasMany(models.Booking, {
+      User.hasMany(models.Booking, {
         foreignKey: "customerId"
       });
 
