@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register</title>
+  <link rel="stylesheet" href="/styles/register.css">
   <style>
     .role-buttons button {
       margin-right: 10px;
@@ -77,7 +78,7 @@
 
         <div class="form-group">
           <label class="form-label">Address</label>
-          <input type="text" name="adress" class="form-input" placeholder="Enter your adress">
+          <input type="text" name="address" class="form-input" placeholder="Enter your adress">
         </div>
         <button type="submit" class="btn-register">Register as Technician</button>
       </form>
@@ -91,7 +92,5 @@
       document.getElementById('form-technician').style.display = (role === 'technician') ? 'block' : 'none';
     }
   </script>
-
 </body>
-
 </html>

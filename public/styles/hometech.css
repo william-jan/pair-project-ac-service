@@ -1,0 +1,133 @@
+.technician-home-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0ea5e9, #0369a1);
+    padding: 40px 20px;
+  }
+  
+  .home-title {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #ffffff;
+    font-size: 28px;
+    font-weight: 700;
+  }
+  
+  .orders-table {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  }
+  
+  .orders-table thead {
+    background-color: #0284c7;
+  }
+  
+  .orders-table th {
+    padding: 14px 12px;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: left;
+    white-space: nowrap;
+  }
+  
+  .orders-table td {
+    padding: 12px;
+    font-size: 14px;
+    color: #334155;
+    border-bottom: 1px solid #e2e8f0;
+    vertical-align: middle;
+  }
+  
+  .orders-table tbody tr:hover {
+    background-color: #f1f5f9;
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  
+  .status-form button {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .status-form button[value="Pending"] {
+    background-color: #facc15;
+    color: #1e293b;
+  }
+  
+  .status-form button[value="Pending"]:hover {
+    background-color: #eab308;
+    color: #ffffff;
+  }
+  
+  .status-form button[value="Accept"] {
+    background-color: #22c55e;
+    color: #ffffff;
+  }
+  
+  .status-form button[value="Accept"]:hover {
+    background-color: #16a34a;
+  }
+  
+  .status-form button[value="Done"] {
+    background-color: #3b82f6;
+    color: #ffffff;
+  }
+  
+  .status-form button[value="Done"]:hover {
+    background-color: #2563eb;
+  }
+  
+  .services-section {
+    margin-top: 25px;
+    text-align: center;
+  }
+  
+  .btn-services {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #0ea5e9, #0284c7);
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-services:hover {
+    background: linear-gradient(135deg, #0284c7, #0369a1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(2, 132, 199, 0.4);
+  }
+  
+  @media (max-width: 768px) {
+    .orders-table {
+      display: block;
+      overflow-x: auto;
+    }
+  
+    .home-title {
+      font-size: 24px;
+    }
+  
+    .status-form button {
+      font-size: 12px;
+      padding: 5px 8px;
+    }
+  }
+  

@@ -12,20 +12,21 @@ router.post("/login", Controller.handleLogin);
 router.get("/register", Controller.showRegister);
 router.post("/register", Controller.handleRegister);
 
-// // LOGOUT
+// LOGOUT
 router.get("/logout", Controller.handleLogout);
 
-// // HOME
+// HOME
 router.get("/customer", Controller.showHomeCustomer);
 router.get("/technician", Controller.showHomeTechnician);
 
-// // CUSTOMER FLOW
-// router.get("/bookings/add", Controller.showAddBooking);
-// router.post("/bookings/add", Controller.handleAddBooking);
+// CUSTOMER FLOW
+// Add Booking
+router.get("/customer/bookings/add", Controller.showAddBooking);
+router.post("/customer/bookings/add", Controller.handleAddBooking);
 
-// router.get("/cart", Controller.showCart);
-// router.post("/cart/checkout", Controller.handleCheckout);
-
-// router.get("/payment", Controller.showPayment);
-
+// Cart system
+router.get("/customer/cart", Controller.showCart);
+router.get("/customer/cart/:id/edit", Controller.showEditCartItem);
+router.post("/customer/cart/:id/edit", Controller.handleEditCartItem);
+router.post("/customer/cart/:id/delete", Controller.handleDeleteCartItem);
 module.exports = router;

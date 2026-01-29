@@ -1,0 +1,65 @@
+.payment-success {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0ea5e9, #0369a1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 20px;
+    text-align: center;
+  }
+  
+  .payment-success .card {
+    background-color: #ffffff;
+    padding: 40px 30px;
+    border-radius: 14px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    margin-bottom: 25px;
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  .payment-success .card p {
+    font-size: 18px;
+    font-weight: 600;
+    color: #0f172a;
+    margin: 10px 0;
+  }
+  
+  .back-to-home {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #0ea5e9, #0284c7);
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .back-to-home:hover {
+    background: linear-gradient(135deg, #0284c7, #0369a1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(2, 132, 199, 0.4);
+  }
+  
+  .back-to-home:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+  
+  @media (max-width: 480px) {
+    .payment-success .card {
+      padding: 30px 20px;
+    }
+  
+    .payment-success .card p {
+      font-size: 16px;
+    }
+  
+    .back-to-home {
+      font-size: 14px;
+      padding: 10px 20px;
+    }
+  }
+  

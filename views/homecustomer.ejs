@@ -1,40 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Home</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Home</title>
+  <link rel="stylesheet" href="/styles/homecus.css">
 </head>
+
 <body>
 
-    <div class="home-page">
-        <h1 class="home-title">My Bookings</h1>
+  <div class="home-page">
+    <h1 class="home-title">My Bookings</h1>
 
-        <table class="booking-table" border="1" cellpadding="10">
-            <thead>
-                <tr>
-                    <th>Booking Code</th>
-                    <th>Service</th>
-                    <th>Qty</th>
-                    <th>Technician</th>
-                    <th>Schedule</th>
-                    <th>Address</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="booking-code"><%=  %></td>
-                    <td class="service-name"><%=  %></td>
-                    <td class="booking-qty"><%=  %></td>
-                    <td class="technician-name"><%=  %></td>
-                    <td class="schedule"><%=  %></td>
-                    <td class="address"><%=  %></td>
-                    <td class="status"><%=  %></td>
-                </tr>
+    <table class="booking-table" border="1" cellpadding="10">
+      <thead>
+        <tr>
+          <th>Booking Code</th>
+          <th>Service</th>
+          <th>Qty</th>
+          <th>Technician</th>
+          <th>Schedule</th>
+          <th>Address</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="booking-code">
+            <%= %>
+          </td>
+          <td class="service-name">
+            <%= %>
+          </td>
+          <td class="booking-qty">
+            <%= %>
+          </td>
+          <td class="technician-name">
+            <%= %>
+          </td>
+          <td class="schedule">
+            <%= %>
+          </td>
+          <td class="address">
+            <%= %>
+          </td>
+          <td class="status">
+            <%= %>
+          </td>
+        </tr>
 
-            </tbody>
-        </table>
-    </div>
+      </tbody>
+    </table>
+
+    <th>Action</th>
+
+    <td class="action">
+      <a href="/customer/cart"><button>cart</button></a>
+    </td>
+
+    <a href="/customer/bookings/add"><button>Add Booking</button></a>
+  </div>
 </body>
+
 </html>
