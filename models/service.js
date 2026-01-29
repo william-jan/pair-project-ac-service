@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "technicianId"
       });
 
-      // services N-N bookings
+      // services M-M bookings
       Service.belongsToMany(models.Booking, {
         through: models.BookingService,
         foreignKey: "serviceId",
@@ -26,7 +26,6 @@ module.exports = (sequelize, DataTypes) => {
       Service.hasMany(models.BookingService, {
         foreignKey: "serviceId"
       });
-
     }
   }
   Service.init({

@@ -17,6 +17,8 @@
       display: none;
       margin-top: 20px;
     }
+
+
   </style>
 </head>
 
@@ -26,7 +28,12 @@
     <div class="register-card">
 
       <h1 class="register-title">Register</h1>
-
+      <% if (errors) { %>
+        <% errors = errors.split(";") %>
+        <% errors.forEach(error => { %>
+           <p style="color: red;"><%= error %></p>
+        <% }) %>
+       <% } %>
       <div class="role-buttons">
         <button type="button" class="btn-customer" onclick="showForm('customer')">Customer</button>
         <button type="button" class="btn-technician" onclick="showForm('technician')">Technician</button>

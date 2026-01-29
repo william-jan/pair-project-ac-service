@@ -1,69 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cart</title>
-    <link rel="stylesheet" href="/styles/cart.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart</title>
+  <link rel="stylesheet" href="/styles/cart.css">
 </head>
+
 <body>
 
-    <div class="cart-page">
-        <h1 class="cart-title">My Cart</h1>
+  <div class="cart-page">
+    <h1 class="cart-title">My Cart</h1>
+    <!-- Notifikasi Delete -->
+    <% if (deleted) { %>
+      <p style="color: green; background: #d4edda; padding: 10px; border-radius: 5px;">
+    <%= deleted %>
+      </p>
+    <% } %>
+    <% if (cartItems.length===0) { %>
+      <p class="empty-cart">Keranjang Anda kosong</p>
+      <a href="/customer"><button class="btn-back">Kembali</button></a>
+    <% } else { %>
+        <table class="cart-table" border="1" cellpadding="10">
+          <thead>
+            <tr>
+              <th>Booking Code</th>
+              <th>Jasa</th>
+              <th>Qty</th>
+              <th>Harga Satuan</th>
+              <th>Subtotal</th>
+              <th>Schedule</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% let totalPrice=0; %>
 
-        <% if (cartItems.length === 0) { %>
-            <p class="empty-cart">Keranjang Anda kosong</p>
-            <a href="/customer"><button class="btn-back">Kembali</button></a>
-        <% } else { %>
-            <table class="cart-table" border="1" cellpadding="10">
-                <thead>
-                    <tr>
-                        <th>Booking Code</th>
-                        <th>Jasa</th>
-                        <th>Qty</th>
-                        <th>Harga Satuan</th>
-                        <th>Subtotal</th>
-                        <th>Schedule</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% 
-                    let totalPrice = 0;
-                    cartItems.forEach(el => { 
-                        const subtotal = el.Service.price * el.qty;
-                        totalPrice += subtotal;
-                    %>
-                        <tr>
-                            <td class="booking-code">#<%= el.Booking.id %></td>
-                            <td class="service-name"><%= el.Service.name %></td>
-                            <td class="booking-qty"><%= el.qty %></td>
-                            <td class="price">Rp <%= currency(el.Service.price) %></td>
-                            <td class="subtotal">Rp <%= currency(subtotal) %></td>
-                            <td class="schedule"><%= dayjs(el.Booking.scheduleDate) %></td>
-                            <td class="action-buttons">
-                                <a href="/customer/cart/<%= el.id %>/edit">
-                                    <button type="button" class="btn-edit">Edit</button>
-                                </a>
-                                <form action="/customer/cart/<%= el.id %>/delete" method="post" style="display: inline;">
-                                    <button type="submit" class="btn-delete" onclick="return confirm('Yakin hapus item ini?')">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                    <% }) %>
-                </tbody>
-            </table>
+            <% for (let i=0; i < cartItems.length; i++) { %>
+              <% const el=cartItems[i]; %>
+              <% const subtotal=el.Service.price * el.qty; %>
+              <% totalPrice +=subtotal; %>
 
-            <div class="cart-total">
-                <p>Total Price: <span class="total-price">Rp <%= currency(totalPrice) %></span></p>
-            </div>
+              <tr>
+                <td class="booking-code">#<%= el.Booking.bookingCode %></td>
+                <td class="service-name"><%= el.Service.name %></td>
+                <td class="booking-qty"><%= el.qty %></td>
+                <td class="price"><%= currency(el.Service.price) %></td>
+                <td class="subtotal"><%= currency(subtotal) %></td>
+                <td class="schedule"><%= dayjs(el.Booking.scheduleDate) %></td>
+                <td class="action-buttons">
+                  <a href="/customer/cart/<%= el.id %>/edit">
+                    <button type="button" class="btn-edit">Edit</button>
+                  </a>
 
-            <form action="/cart/checkout" method="post" class="checkout-form">
-                <button type="submit" class="btn-checkout">Lanjut Pembayaran</button>
-            </form>
-        <% } %>
+                  <form action="/customer/cart/<%= el.id %>/delete" method="post" style="display:inline;">
+                    <button type="submit" class="btn-delete"
+                      onclick="return confirm('Yakin hapus item ini?')">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
 
-    </div>
+        <div class="cart-total">
+          <p>Total Price: <span class="total-price"><%= currency(totalPrice) %></span></p>
+        </div>
+
+        <form action="/customer/cart/checkout" method="post" class="checkout-form">
+          <button type="submit" class="btn-checkout" <%=cartItems.length===0 ? "disabled" : "" %>>
+            Lanjut Pembayaran
+          </button>
+        </form>
+    <% } %>
+
+  </div>
 
 </body>
+
 </html>

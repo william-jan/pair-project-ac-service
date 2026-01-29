@@ -2,91 +2,80 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Technician Home</title>
-  <link rel="stylesheet" href="/styles/hometec.css">
+  <link rel="stylesheet" href="/styles/hometech.css" />
 </head>
 
 <body>
-
   <div class="technician-home-page">
     <h1 class="home-title">Orders Customer</h1>
-
-    <table class="orders-table" border="1" cellpadding="10">
-      <thead>
-        <tr>
-          <th>Booking Code</th>
-          <th>Customer Name</th>
-          <th>Service</th>
-          <th>Qty</th>
-          <th>Schedule</th>
-          <th>Address</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% rows.forEach(function(row){ %>
-          <% const st=row.Booking.status; %>
-
+    <div class="orders-table">
+      <a href="/logout"><button>Logout</button></a>
+      <table border="1" cellpadding="10">
+        <thead>
+          <tr>
+            <th>Booking Code</th>
+            <th>Customer Name</th>
+            <th>Service</th>
+            <th>Qty</th>
+            <th>Schedule</th>
+            <th>Address</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+  
+        <tbody>
+          <% rows.forEach(function(row){ %>
+            <% const st = row.Booking.status; %>
+  
             <tr>
-              <td>
-                <%= row.Booking.bookingCode %>
-              </td>
-              <td>
-                <%= row.Booking.User.name %>
-              </td>
-              <td>
-                <%= row.Service.name %>
-              </td>
-              <td>
-                <%= row.qty %>
-              </td>
-              <td>
-                <%= dayjs.formatDateTime(row.Booking.scheduleDate) %>
-              </td>
-              <td>
-                <%= row.Booking.address %>
-              </td>
-
+              <td><%= row.Booking.bookingCode %></td>
+              <td><%= row.Booking.User.name %></td>
+              <td><%= row.Service.name %></td>
+              <td><%= row.qty %></td>
+              <td><%= dayjs(row.Booking.scheduleDate) %></td>
+              <td><%= row.Booking.address %></td>
+              <td class="status-col"><%= st %></td>
+  
               <td class="action-buttons">
                 <form action="/technician/orders/update" method="post" class="status-form">
                   <input type="hidden" name="bookingId" value="<%= row.Booking.id %>">
 
-                  <!-- Pending: selalu “mendem” (karena ini status awal setelah bayar) -->
-                  <button type="submit" name="status" value="pending"
-                    class="btn-status <%= st === 'pending' ? 'active' : '' %>" disabled>
-                    Pending
-                  </button>
-
-                  <!-- Accepted: aktif hanya kalau status sekarang pending -->
-                  <button type="submit" name="status" value="accepted"
-                    class="btn-status <%= st === 'accepted' ? 'active' : '' %>" <%=st !=="pending" ? "disabled" : "" %>
-                    >
+                  <button
+                    type="submit"
+                    name="status"
+                    value="accepted"
+                    class="btn-status <%= st === 'accepted' ? 'active' : '' %>"
+                    <%= st !== "pending" ? "disabled" : "" %>
+                  >
                     Accepted
                   </button>
 
-                  <!-- Done: aktif hanya kalau status sekarang accepted -->
-                  <button type="submit" name="status" value="done"
-                    class="btn-status <%= st === 'done' ? 'active' : '' %>" <%=st !=="accepted" ? "disabled" : "" %>
-                    >
+                  <button
+                    type="submit"
+                    name="status"
+                    value="done"
+                    class="btn-status <%= st === 'done' ? 'active' : '' %>"
+                    <%= st !== "accepted" ? "disabled" : "" %>
+                  >
                     Done
                   </button>
                 </form>
               </td>
             </tr>
-            <% }) %>
-      </tbody>
-    </table>
-
-    <div class="services-section">
-      <form action="/technician/services" method="get">
-        <button type="submit" class="btn-services">Layanan Anda</button>
-      </form>
+          <% }) %>
+        </tbody>
+      </table>
+  
+      <div class="services-section">
+        <form action="/services" method="get">
+          <button type="submit" class="btn-services">Layanan Anda</button>
+        </form>
+      </div>
     </div>
-
   </div>
-
 </body>
-
 </html>

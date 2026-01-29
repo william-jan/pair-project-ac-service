@@ -6,7 +6,7 @@ const bcrypt = require("bcryptjs");
 module.exports = {
   async up(queryInterface, Sequelize) {
     let data = JSON.parse(await fs.readFile("./data/users.json", "utf8")).map((el) => {
-
+      delete el.id
       el.password = bcrypt.hashSync(el.password, 10);
       el.createdAt = el.updatedAt = new Date();
       return el;

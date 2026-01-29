@@ -12,6 +12,14 @@
     font-weight: 700;
   }
   
+  .empty-cart {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 700;
+  }
+
   .cart-table {
     width: 100%;
     max-width: 1100px;

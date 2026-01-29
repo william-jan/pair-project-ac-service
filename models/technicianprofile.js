@@ -14,12 +14,50 @@ module.exports = (sequelize, DataTypes) => {
       TechnicianProfile.belongsTo(models.User, {
         foreignKey: "userId"
       });
+
+      TechnicianProfile.hasMany(models.Booking, {
+        foreignKey: "technicianprofileId"
+      })
+
     }
   }
   TechnicianProfile.init({
-    userId: DataTypes.INTEGER,
-    companyName: DataTypes.STRING,
-    address: DataTypes.STRING
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull:false,
+      validate:{
+        notNull: {
+          msg: "userId required!"
+        },
+        notEmpty: {
+          msg: "userId required!"
+        },
+      },
+    },
+    companyName:{
+      type: DataTypes.STRING,
+      allowNull:false,
+      validate:{
+        notNull: {
+          msg: "companyName required!"
+        },
+        notEmpty: {
+          msg: "companyName required!"
+        },
+      },
+    },
+    address: {
+      type: DataTypes.STRING,
+      allowNull:false,
+      validate:{
+        notNull: {
+          msg: "address required!"
+        },
+        notEmpty: {
+          msg: "address required!"
+        },
+      },
+    },
   }, {
     sequelize,
     modelName: 'TechnicianProfile',

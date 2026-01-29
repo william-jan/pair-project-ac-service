@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "customerId"
       });
 
-      // M-N ke Service via BookingService
+      // M-M ke Service via BookingService
       Booking.belongsToMany(models.Service, {
         through: models.BookingService,
         foreignKey: "bookingId",
@@ -26,6 +26,10 @@ module.exports = (sequelize, DataTypes) => {
       Booking.hasMany(models.BookingService, {
         foreignKey: "bookingId"
       });
+
+      Booking.belongsTo(models.TechnicianProfile, {
+        foreignKey: "technicianprofileId"
+      })
 
     }
   }
@@ -100,7 +104,7 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Booking',
   });
 
-  Booking.beforeCreate((booking) => {
+  Booking.beforeValidate((booking) => {
     const now = Date.now();
     const rand = Math.floor(100 + Math.random() * 900)
 
@@ -109,3 +113,4 @@ module.exports = (sequelize, DataTypes) => {
 
   return Booking;
 };
+

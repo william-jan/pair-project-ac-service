@@ -1,86 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Cart Item</title>
-    <link rel="stylesheet" href="/styles/cartedit.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Cart Item</title>
+  <link rel="stylesheet" href="/styles/cartedit.css">
 </head>
+
 <body>
-    <div class="edit-page">
-        <div class="edit-card">
-            <h1 class="edit-title">Edit Cartt</h1>
+  <div class="edit-page">
+    <div class="edit-card">
+      <h1 class="edit-title">Edit Cart</h1>
+      
+      <% if (errors) { %>
+        <% errors=errors.split(";") %>
+          <% errors.forEach(error=> { %>
+            <p style="color: red;">
+              <%= error %>
+            </p>
+            <% }) %>
+      <% } %>
+      
+      <form action="/customer/cart/<%= itemId %>/edit" method="post" class="edit-form">
 
-            <form action="/cart/edit/<%= item.id %>" method="post" class="edit-form">
-                
-                <div class="form-group">
-                    <label class="form-label">Nama Jasa</label>
-                    <input 
-                        type="text" 
-                        value="<%= item.Service.name %>" 
-                        class="form-input" 
-                        readonly>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Harga per Unit</label>
-                    <input 
-                        type="text" 
-                        value="Rp <%= currency(item.Service.price) %>" 
-                        class="form-input" 
-                        readonly>
-                </div>
-
-                <div class="form-group">
-                    <label for="qty" class="form-label">Qty</label>
-                    <input 
-                        type="number" 
-                        name="qty" 
-                        id="qty" 
-                        value="<%= item.qty %>" 
-                        class="form-input" 
-                        min="1" 
-                        required>
-                </div>
-
-                <div class="form-group">
-                    <label for="scheduleDate" class="form-label">Jadwal</label>
-                    <input 
-                        type="datetime-local" 
-                        name="scheduleDate" 
-                        id="scheduleDate" 
-                        value="<%= dayjs(item.Booking.scheduleDate).format('YYYY-MM-DDTHH:mm') %>" 
-                        class="form-input" 
-                        required>
-                </div>
-
-                <div class="form-group">
-                    <label for="address" class="form-label">Alamat</label>
-                    <input 
-                        type="text" 
-                        name="address" 
-                        id="address" 
-                        value="<%= item.Booking.address %>" 
-                        class="form-input" 
-                        placeholder="Masukkan alamat" 
-                        required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Total Harga</label>
-                    <input 
-                        type="text" 
-                        value="Rp <%= currency(item.Service.price * item.qty) %>" 
-                        class="form-input" 
-                        readonly >
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn-save">Simpan Perubahan</button>
-                    <a href="/customer" class="btn-cancel">Batal</a>
-                </div>
-            </form>
+        <div class="form-group">
+          <label class="form-label">Nama Jasa</label>
+          <input type="text" value="<%= item['Service.name'] || item.Service.name %>" class="form-input" readonly>
         </div>
+
+        <div class="form-group">
+          <label class="form-label">Harga per Unit</label>
+          <input type="text" value="<%= currency(item['Service.price'] || item.Service.price) %>" class="form-input" readonly>
+        </div>
+
+        <div class="form-group">
+          <label for="qty" class="form-label">Qty</label>
+          <input type="number" name="qty" id="qty" value="<%= item.qty %>" class="form-input" min="1" required>
+        </div>
+
+        <div class="form-group">
+          <label for="scheduleDate" class="form-label">Jadwal</label>
+          <input type="datetime-local" name="scheduleDate" id="scheduleDate"
+            value="<%= item['Booking.scheduleDate'] || item.Booking.scheduleDate %>" class="form-input" required>
+        </div>
+
+        <div class="form-group">
+          <label for="address" class="form-label">Alamat</label>
+          <input type="text" name="address" id="address" value="<%= item['Booking.address'] || item.Booking.address %>"
+            class="form-input" placeholder="Masukkan alamat" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Total Harga</label>
+          <input type="text" value="<%= currency((item['Service.price'] || item.Service.price) * item.qty) %>" class="form-input" readonly>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-save">Simpan Perubahan</button>
+          <a href="/customer/cart" class="btn-cancel">Batal</a>
+        </div>
+      </form>
     </div>
+  </div>
 </body>
+
 </html>

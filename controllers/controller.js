@@ -5,10 +5,10 @@ const { Op } = require("sequelize");
 
 class Controller {
 
-
   static async showWelcome(req, res) {
     try {
-      res.render("login");
+      const { errors } = req.query;
+      res.render("login", { errors });
     } catch (error) {
       res.send(error.message);
     }
@@ -28,13 +28,14 @@ class Controller {
       return res.redirect("/technician");
 
     } catch (error) {
-      res.send(error.message)
+      res.redirect(`/login?errors=${error.message}`);
     }
   }
 
   static async showRegister(req, res) {
     try {
-      res.render("register")
+      const { errors } = req.query;
+      res.render("register", { errors })
     } catch (error) {
       res.send(error.message);
     }
@@ -43,12 +44,23 @@ class Controller {
   static async handleRegister(req, res) {
     try {
       const { role, name, email, password, companyName, address } = req.body;
-      const newUser = await User.create({
-        name,
-        email,
-        password,
-        role,
-      })
+
+      let errors = [];
+
+      if (!name) errors.push("name required!");
+      if (!email) errors.push("email required!");
+      if (!password) errors.push("password required!");
+
+      if (role === "technician") {
+        if (!companyName) errors.push("company required!");
+        if (!address) errors.push("address required!");
+      }
+
+      if (errors.length) {
+        return res.redirect(`/register?errors=${errors.join(";")}`);
+      }
+
+      const newUser = await User.create({ name, email, password, role });
 
       if (role === "technician") {
         await TechnicianProfile.create({
@@ -60,16 +72,10 @@ class Controller {
 
       res.redirect("/login");
     } catch (error) {
-      res.send(error.message);
-    }
-  }
-
-  static async handleLogout(req, res) {
-    try {
-      req.session.destroy(() => {
-        res.redirect("/login");
-      })
-    } catch (error) {
+      if (error.name === "SequelizeValidationError") {
+        let errors = error.errors.map(el => el.message).join(";");
+        return res.redirect(`/register?errors=${errors}`);
+      }
       res.send(error.message);
     }
   }
@@ -77,29 +83,38 @@ class Controller {
   static async showHomeCustomer(req, res) {
     try {
       if (!req.session.userId) return res.redirect("/login");
-      if (req.session.role != "customer") return res.redirect("/login");
-
+      if (req.session.role !== "customer") return res.redirect("/login");
+  
       const { userId } = req.session;
-
+      const { bookingCode } = req.query;
+  
+      let where = {
+        customerId: userId,
+      };
+  
+      if (bookingCode) {
+        where.bookingCode = {
+          [Op.iLike]: `%${bookingCode}%`, 
+        };
+      }
+  
       const bookings = await Booking.findAll({
-        where: { customerId: userId },
+        where,
         include: [
           {
             model: Service,
-            through: { attributes: ["qty"] }, // take qty column
-          }
+            through: { attributes: ["qty"] },
+          },
         ],
-        order: [["id", "ASC"]],
+        order: [["scheduleDate", "DESC"]],
       });
-
+  
       res.render("homecustomer", {
         bookings,
         dayjs: formatDateTime,
-        currency: currencyHelper
+        currency: currencyHelper,
+        bookingCode, 
       });
-
-
-
     } catch (error) {
       res.send(error.message);
     }
@@ -138,20 +153,56 @@ class Controller {
       if (!req.session.userId) return res.redirect("/login");
       if (req.session.role !== "customer") return res.redirect("/login");
 
-      const services = await Service.findAll({
-        include: [
-          {
-            model: User,
-            include: [TechnicianProfile],
-          }
-        ],
-        order: [["id", "ASC"]],
+      const { serviceId, errors } = req.query;
+
+
+      const servicesAll = await Service.findAll({
+        order: [["name", "ASC"]],
       });
+
+
+      let services = [];
+      let seen = {};
+      servicesAll.forEach((s) => {
+        if (!seen[s.name]) {
+          seen[s.name] = true;
+          services.push({ id: s.id, name: s.name });
+        }
+      });
+
+
+      let selectedServiceId = Number(serviceId);
+      if (!selectedServiceId && services.length) selectedServiceId = services[0].id;
+
+
+      let selectedName = null;
+      if (selectedServiceId) {
+        const picked = await Service.findByPk(selectedServiceId);
+        if (picked) selectedName = picked.name;
+      }
+
+
+      let technicians = [];
+      if (selectedName) {
+        const rows = await Service.findAll({
+          where: { name: selectedName },
+          attributes: ["technicianId"],
+        });
+
+        const techUserIds = rows.map((r) => r.technicianId);
+
+        technicians = await TechnicianProfile.findAll({
+          where: { userId: { [Op.in]: techUserIds } },
+          include: [User],
+          order: [["id", "ASC"]],
+        });
+      }
 
       res.render("addbooking", {
         services,
-        dayjs: formatDateTime,
-        currency: currencyHelper,
+        technicians,
+        selectedServiceId,
+        errors,
       });
     } catch (error) {
       res.send(error.message);
@@ -160,38 +211,60 @@ class Controller {
 
   static async handleAddBooking(req, res) {
     try {
-      if (!req.session.userId) return res.redirect("/login");
-      if (req.session.role !== "customer") return res.redirect("/login");
-  
-      const { userId } = req.session;
-      const { scheduleDate, address, qty, serviceId } = req.body;
-  
-      const serviceData = await Service.findByPk(serviceId);
-      if (!serviceData) {
-        return res.send("Service tidak ditemukan");
+      if (!req.session.userId || req.session.role !== "customer") {
+        return res.redirect("/login");
       }
+
+      const userId = req.session.userId;
+      const { serviceId, technicianprofileId, qty, scheduleDate, address } = req.body;
+
+
+      const picked = await Service.findByPk(serviceId);
+      if (!picked) return res.redirect("/customer/bookings/add");
+
+      const serviceName = picked.name;
+
+
+      const techProfile = await TechnicianProfile.findByPk(technicianprofileId);
+      if (!techProfile) return res.redirect(`/customer/bookings/add?serviceId=${serviceId}`);
+
+      const realService = await Service.findOne({
+        where: {
+          name: serviceName,
+          technicianId: techProfile.userId,
+        },
+      });
+      if (!realService) return res.redirect(`/customer/bookings/add?serviceId=${serviceId}`);
+
 
       const booking = await Booking.create({
         customerId: userId,
-        service: serviceData.name, 
+        technicianprofileId: techProfile.id,
+        service: serviceName,
         scheduleDate,
         address,
         status: "waiting for payment",
       });
-  
+
+      // cart item
       await BookingService.create({
         bookingId: booking.id,
-        serviceId: serviceData.id,
-        qty: Number(qty),
+        serviceId: realService.id,
+        qty: Number(qty) || 1,
       });
-  
+
       res.redirect("/customer");
-  
     } catch (error) {
-      res.send(error);
+      if (error.name === "SequelizeValidationError") {
+        const errors = error.errors.map((e) => e.message).join(";");
+        const { serviceId } = req.body;
+        return res.redirect(`/customer/bookings/add?serviceId=${serviceId}&errors=${errors}`);
+      }
+      res.send(error.message);
     }
   }
-  
+
+
 
 
   static async showCart(req, res) {
@@ -200,8 +273,9 @@ class Controller {
       if (req.session.role !== "customer") return res.redirect("/login");
 
       const { userId } = req.session;
-
+      const { deleted } = req.query;
       const cartItems = await BookingService.findAll({
+        attributes: ["id", "bookingId", "serviceId", "qty"], // <- id WAJIB ADA
         include: [
           {
             model: Booking,
@@ -211,13 +285,14 @@ class Controller {
         ],
         order: [["id", "ASC"]],
       });
+      console.log(cartItems);
 
       res.render("cartpage", {
         cartItems,
         dayjs: formatDateTime,
-        currency: currencyHelper
+        currency: currencyHelper.formatIDR, // biar di ejs: currency(angka)
+        deleted,
       });
-
     } catch (error) {
       res.send(error.message);
     }
@@ -225,10 +300,12 @@ class Controller {
 
   static async showEditCartItem(req, res) {
     try {
+      console.log("MASUK EDIT CART", req.params.id);
+      const { errors } = req.query;
       if (!req.session.userId) return res.redirect("/login");
       if (req.session.role !== "customer") return res.redirect("/login");
 
-      const { id } = req.params; //id BookingService
+      const { id } = req.params;  // <-- ID ada di sini!
       const { userId } = req.session;
 
       const item = await BookingService.findOne({
@@ -236,16 +313,27 @@ class Controller {
         include: [
           {
             model: Booking,
-            where: { customerId: userId, status: "waiting for payment" },
+            where: {
+              customerId: userId,
+              status: "waiting for payment",
+            },
           },
           { model: Service },
-        ]
+        ],
+        raw: true,
+        nest: true,
       });
 
-      res.render("cartEdit", {
+      if (!item) {
+        return res.redirect("/customer/cart");
+      }
+
+      res.render("cartedit", {
         item,
-        dayjs: dayjsHelper,
-        currency: currencyHelper
+        itemId: id,
+        dayjs: formatDateTime,
+        currency: currencyHelper.formatIDR,
+        errors,
       });
     } catch (error) {
       res.send(error.message);
@@ -253,15 +341,14 @@ class Controller {
   }
 
   static async handleEditCartItem(req, res) {
+    const { id } = req.params;  //id BookingService
     try {
       if (!req.session.userId) return res.redirect("/login");
       if (req.session.role !== "customer") return res.redirect("/login");
 
-      const { id } = req.params; //id BookingService
       const { userId } = req.session;
       const { qty, scheduleDate, address } = req.body;
 
-      //update qty item
       await BookingService.update(
         { qty: Number(qty) },
         { where: { id } }
@@ -287,7 +374,12 @@ class Controller {
       res.redirect("/customer/cart");
 
     } catch (error) {
-      res.send(error.message);
+      if (error.name === "SequelizeValidationError") {
+        let errors = error.errors.map((el) => el.message).join(";");
+        res.redirect(`/customer/cart/${id}/edit?errors=${errors}`);
+      } else {
+        res.send(error);
+      }
     }
   }
 
@@ -295,12 +387,22 @@ class Controller {
     try {
       if (!req.session.userId) return res.redirect("/login");
       if (req.session.role !== "customer") return res.redirect("/login");
-
+  
       const { id } = req.params; //id BookingService
-
+      const item = await BookingService.findOne({
+        where: { id },
+        include: [
+          { model: Service },
+          { model: Booking }
+        ]
+      });
+  
+      if (!item) {
+        return res.redirect("/customer/cart?deleted=Item not found");
+      }
       await BookingService.destroy({ where: { id } });
-
-      res.redirect("/customer/cart");
+      const message = `${item.Booking.bookingCode} (Qty: ${item.qty}) has been removed from cart`;
+      res.redirect(`/customer/cart?deleted=${message}`);
     } catch (error) {
       res.send(error.message);
     }
@@ -354,7 +456,6 @@ class Controller {
       const technicianId = req.session.userId;
       const { bookingId, status } = req.body;
 
-      // Validasi simpel: booking ini memang punya service milik technician ini
       const row = await BookingService.findOne({
         where: { bookingId: Number(bookingId) },
         include: [
@@ -365,7 +466,7 @@ class Controller {
 
       if (!row) return res.redirect("/technician");
 
-      // Optional: enforce urutan status
+      //  urutan status
       const current = row.Booking.status;
       if (current === "pending" && status !== "accepted") return res.redirect("/technician");
       if (current === "accepted" && status !== "done") return res.redirect("/technician");
@@ -381,6 +482,101 @@ class Controller {
       res.send(error.message);
     }
   }
+
+  static async yourservice(req, res) {
+    try {
+      if (!req.session.userId) return res.redirect("/login");
+      if (req.session.role !== "technician") return res.redirect("/login");
+
+      const technicianId = req.session.userId;
+
+      // jasa yang sudah dimiliki teknisi
+      const data = await Service.findAll({
+        where: { technicianId },
+        order: [["id", "ASC"]],
+      });
+
+      // sesuai service.json untuk layanan dan harga
+      const master = [
+        { name: "Cuci AC", price: 150000 },
+        { name: "Isi Freon", price: 250000 },
+        { name: "Bongkar Pasang", price: 300000 },
+        { name: "Cek Kebocoran", price: 100000 },
+      ];
+
+      // filter yang belum dimiliki
+      const ownedNames = data.map((s) => s.name);
+      const available = master.filter((m) => !ownedNames.includes(m.name));
+
+      res.render("yourservice", { data, available, currency: currencyHelper });
+    } catch (error) {
+      res.send(error.message);
+    }
+  }
+
+
+  static async handleAddService(req, res) {
+    try {
+      if (!req.session.userId) return res.redirect("/login");
+      if (req.session.role !== "technician") return res.redirect("/login");
+
+      const technicianId = req.session.userId;
+      const { name } = req.body;
+
+      const master = {
+        "Cuci AC": 150000,
+        "Isi Freon": 250000,
+        "Bongkar Pasang": 300000,
+        "Cek Kebocoran": 100000,
+      };
+
+      const price = master[name];
+      if (!price) return res.redirect("/services");
+
+      // filter jasa teknisi
+      const exist = await Service.findOne({ where: { technicianId, name } });
+      if (exist) return res.redirect("/services");
+
+      await Service.create({
+        name,
+        price,
+        technicianId,
+      });
+
+      res.redirect("/services");
+    } catch (error) {
+      res.send(error.message);
+    }
+  }
+
+
+  static async deleteservice(req, res) {
+    try {
+      const { serviceId } = req.body;
+
+      await Service.destroy({
+        where: { id: Number(serviceId) }
+      });
+      
+      res.redirect("/services");
+    } catch (error) {
+      res.send(error);
+    }
+  }
+
+  static async handleLogout(req, res) {
+    try {
+      req.session.destroy((err) => {
+        if (err) {
+          return res.send(err.message);
+        }
+        res.redirect("/login");
+      });
+    } catch (error) {
+      res.send(error.message);
+    }
+  }
+
 }
 
 module.exports = Controller;

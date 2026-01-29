@@ -38,4 +38,13 @@ router.get("/customer/payment/success", Controller.showPaymentSuccess);
 router.post("/technician/orders/update", Controller.handleUpdateOrderStatus);
 
 
+router.get("/services", Controller.yourservice);
+router.post("/services/add", Controller.handleAddService);
+router.post("/services/delete", Controller.deleteservice);
+
+
+
+
+
 module.exports = router;
+

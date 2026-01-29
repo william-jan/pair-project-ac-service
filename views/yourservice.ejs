@@ -1,68 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Technician Services</title>
-    <link rel="stylesheet" href="/styles/yourservice.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Technician Services</title>
+  <link rel="stylesheet" href="/styles/yourservice.css">
 </head>
+
 <body>
 
-    <div class="services-page">
-        <h1 class="services-title">Layanan Anda</h1>
-        <table class="services-table" border="1" cellpadding="10">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Nama Jasa</th>
-                    <th>Harga</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><%=  %></td>
-                    <td><%=  %></td>
-                    <td><%=  %></td>
-                    <td>
-                        <form action="/technician/services/edit" method="get" style="display:inline;">
-                            <input type="hidden" name="serviceId" value="1">
-                            <button type="submit" class="btn-edit">Edit</button>
-                        </form>
-                        <form action="/technician/services/delete" method="post" style="display:inline;">
-                            <input type="hidden" name="serviceId" value="1">
-                            <button type="submit" class="btn-delete">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+  <div class="services-page">
+    <h1 class="services-title">Layanan Anda</h1>
+    <table class="services-table" border="1" cellpadding="10">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Nama Jasa</th>
+          <th>Harga</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% data.forEach((el, i)=> { %>
+          <tr>
+            <td>
+              <%= i + 1 %>
+            </td>
+            <td>
+              <%= el.name %>
+            </td>
+            <td>
+              <%= currency.formatIDR(el.price) %>
+            </td>
+            <td>
+              <form action="services/delete" method="post" style="display:inline;">
+                <input type="hidden" name="serviceId" value="<%= el.id %>">
+                <button type="submit" class="btn-delete">Delete</button>
+              </form>
+            </td>
+          </tr>
+          <% }) %>
+      </tbody>
+    </table>
 
-        <div class="add-service-section">
-            <h2 class="add-service-title">Tambah Jasa Baru</h2>
-            <form action="/technician/services/add" method="post" class="add-service-form">
+    <div class="add-service-section">
+      <h2 class="add-service-title">Tambah Jasa Baru</h2>
+      <form action="services/add" method="post" class="add-service-form">
 
-                <div class="form-group">
-                    <label for="serviceName" class="form-label">Nama Jasa</label>
-                    <select name="serviceName" id="serviceName" class="form-input">
-                        <option value="" disabled selected>Pilih jasa</option>
-                        <option value="Service A" data-price="<%=  %>"><%=  %></option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="price" class="form-label">Harga</label>
-                    <input 
-                        type="text" 
-                        name="price" 
-                        id="price" 
-                        class="form-input" value="<%=  %>"
-                        placeholder="Harga akan otomatis muncul" 
-                        readonly>
-                </div>
-                <button type="submit" class="btn-add-service">Tambah Jasa</button>
-            </form>
+        <div class="form-group">
+          <% let jasa=["Cuci AC", "Isi Freon" , "Bongkar Pasang" ,"Cek Kebocoran"] %>
+            <label class="form-label">Nama Jasa</label>
+            <select name="name" class="form-input" required>
+              <option value="" disabled selected>Pilih jasa</option>
+
+              <% available.forEach(function(item){ %>
+                <option value="<%= item.name %>">
+                  <%= item.name %> - <%= currency.formatIDR(item.price) %>
+                </option>
+                <% }) %>
+            </select>
+
         </div>
+
+        <button type="submit" class="btn-add-service">Tambah Jasa</button>
+      </form>
     </div>
+  </div>
 </body>
+
 </html>

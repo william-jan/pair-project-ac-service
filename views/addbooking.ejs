@@ -1,52 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Booking</title>
-    <link rel="stylesheet" href="/styles/addbooking.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Booking</title>
+  <link rel="stylesheet" href="/styles/addbooking.css">
 </head>
+
 <body>
 
-    <div class="booking-page">
-        <div class="booking-card">
+  <div class="booking-page">
+    <div class="booking-card">
 
-            <h1 class="booking-title">Add Booking</h1>
-
-            <form action="/customer/bookings/add" method="post" class="booking-form">
-
-                <div class="form-group">
-                    <label for="serviceId" class="form-label">Nama Jasa</label>
-                    <select name="serviceId" id="serviceId" class="form-input" required>
-                        <option value="" disabled selected>Pilih jasa</option>
-                        <% services.forEach(el => { %>
-                            <option value="<%= el.id %>"><%= el.name %></option>
+      <h1 class="booking-title">Add Booking</h1>
+      <% if (errors) { %>
+        <% errors=errors.split(";") %>
+          <% errors.forEach(error=> { %>
+            <p style="color: red;">
+              <%= error %>
+            </p>
+            <% }) %>
+              <% } %>
+                <form action="/customer/bookings/add" method="get">
+                  <div class="form-group">
+                    <label for="serviceId">Nama Jasa</label>
+                    <select name="serviceId" id="serviceId" class="form-input" required
+                      onchange="window.location='/customer/bookings/add?serviceId=' + this.value">
+                      <% services.forEach(function(s){ %>
+                        <option value="<%= s.id %>" <%=s.id===selectedServiceId ? "selected" : "" %>>
+                          <%= s.name %>
+                        </option>
                         <% }) %>
                     </select>
-                </div>
+                  </div>
+                </form>
 
-                <div class="form-group">
-                    <label for="qty" class="form-label">Qty</label>
-                    <input type="number" name="qty" id="qty" class="form-input" placeholder="Jumlah layanan" min="1" required>
-                </div>
+                <% if (technicians.length> 0) { %>
+                  <form action="/customer/bookings/add" method="post" class="booking-form">
+                    <input type="hidden" name="serviceId" value="<%= selectedServiceId %>">
 
-                <div class="form-group">
-                    <label for="schedule" class="form-label">Schedule</label>
-                    <input type="datetime-local" name="scheduleDate" id="schedule" class="form-input" required>
-                </div>
+                    <div class="form-group">
+                      <label for="technicianId">Pilih Technician</label>
+                      <select name="technicianprofileId" id="technicianId" class="form-input" required>
+                        <option value="" disabled selected>Pilih technician</option>
+                        <% technicians.forEach(t=> { %>
+                          <option value="<%= t.id %>">
+                            <%= t.User.name %> - <%= t.companyName %>
+                          </option>
+                          <% }) %>
+                      </select>
 
-                <div class="form-group">
-                    <label for="address" class="form-label">Address Booking</label>
-                    <input type="text" name="address" id="address" class="form-input" placeholder="Masukkan alamat" required>
-                </div>
+                    </div>
 
-                <div class="form-actions">
-                    <button type="submit" class="btn-add-booking">Add Cart</button>
-                </div>
-            </form>
+                    <div class="form-group">
+                      <label for="qty">Qty</label>
+                      <input type="number" name="qty" min="1" required>
+                    </div>
 
-        </div>
+                    <div class="form-group">
+                      <label for="scheduleDate">Schedule</label>
+                      <input type="datetime-local" name="scheduleDate" required>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="address">Address</label>
+                      <input type="text" name="address" required>
+                    </div>
+
+                    <button type="submit">Add Booking</button>
+                  </form>
+                  <% } %>
+
     </div>
-
+  </div>
 </body>
+
 </html>

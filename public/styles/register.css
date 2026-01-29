@@ -53,10 +53,6 @@
   .register-form {
     display: none;
   }
-  
-  .register-form:first-of-type {
-    display: block;
-  }
 
   .form-group {
     margin-bottom: 16px;

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,56 +8,83 @@
 </head>
 
 <body>
-
   <div class="home-page">
-    <h1 class="home-title">My Bookings</h1>
+    <div class="home-container">
 
-    <table class="booking-table" border="1" cellpadding="10">
-      <thead>
-        <tr>
-          <th>Booking Code</th>
-          <th>Service</th>
-          <th>Qty</th>
-          <th>Schedule</th>
-          <th>Address</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% bookings.forEach(booking=> { %>
-          <% booking.Services.forEach(service=> { %>
+      <div class="home-header">
+        <h1 class="home-title">My Bookings</h1>
+        <a href="/logout" class="btn-link">
+          <button class="btn btn-logout">Logout</button>
+        </a>
+      </div>
+
+      <form method="get" class="search-bar">
+        <input
+          type="text"
+          name="bookingCode"
+          placeholder="Cari Booking Code..."
+          value="<%= bookingCode || '' %>"
+        >
+
+        <button type="submit" class="btn btn-primary">
+          Search
+        </button>
+
+        <% if (bookingCode) { %>
+          <a href="/customer" class="btn btn-secondary">
+            Reset
+          </a>
+        <% } %>
+      </form>
+
+      <div class="table-wrapper">
+        <table class="booking-table">
+          <thead>
             <tr>
-              <td class="booking-code">
-                <%= booking.bookingCode %>
-              </td>
-              <td class="service-name">
-                <%= service.name %>
-              </td>
-              <td class="booking-qty">
-                <%= service.BookingService.qty %>
-              </td>
-              <td class="schedule">
-                <%= dayjs(booking.scheduleDate) %>
-              </td>
-              </td>
-              <td class="address">
-                <%= booking.address %>
-              </td>
-              <td class="status">
-                <%= booking.status %>
-              </td>
+              <th>Booking Code</th>
+              <th>Service</th>
+              <th>Qty</th>
+              <th>Schedule</th>
+              <th>Address</th>
+              <th>Status</th>
             </tr>
-            <% }) %>
+          </thead>
+          <tbody>
+            <% if (bookings.length === 0) { %>
+              <tr>
+                <td colspan="6" style="text-align:center; padding:20px;">
+                  Booking tidak ditemukan
+                </td>
+              </tr>
+            <% } %>
+
+            <% bookings.forEach(booking => { %>
+              <% booking.Services.forEach(service => { %>
+                <tr>
+                  <td class="booking-code"><%= booking.bookingCode %></td>
+                  <td class="service-name"><%= service.name %></td>
+                  <td><%= service.BookingService.qty %></td>
+                  <td class="schedule"><%= dayjs(booking.scheduleDate) %></td>
+                  <td class="address"><%= booking.address %></td>
+                  <td class="status"><%= booking.status %></td>
+                </tr>
               <% }) %>
-      </tbody>
-    </table>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
 
-    <td class="action">
-      <a href="/customer/cart"><button>cart</button></a>
-    </td>
+      <div class="home-actions">
+        <a href="/customer/cart" class="btn-link">
+          <button class="btn btn-secondary">Cart</button>
+        </a>
 
-    <a href="/customer/bookings/add"><button>Add Booking</button></a>
+        <a href="/customer/bookings/add" class="btn-link">
+          <button class="btn btn-primary">Add Booking</button>
+        </a>
+      </div>
+
+    </div>
   </div>
 </body>
-
 </html>
