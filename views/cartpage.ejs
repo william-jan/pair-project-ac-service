@@ -40,7 +40,7 @@
                             <td class="booking-qty"><%= el.qty %></td>
                             <td class="price">Rp <%= currency(el.Service.price) %></td>
                             <td class="subtotal">Rp <%= currency(subtotal) %></td>
-                            <td class="schedule"><%= dayjs(el.Booking.scheduleDate).format('DD MMM YYYY, HH:mm') %></td>
+                            <td class="schedule"><%= dayjs(el.Booking.scheduleDate) %></td>
                             <td class="action-buttons">
                                 <a href="/customer/cart/<%= el.id %>/edit">
                                     <button type="button" class="btn-edit">Edit</button>

@@ -19,41 +19,39 @@
           <th>Booking Code</th>
           <th>Service</th>
           <th>Qty</th>
-          <th>Technician</th>
           <th>Schedule</th>
           <th>Address</th>
           <th>Status</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td class="booking-code">
-            <%= %>
-          </td>
-          <td class="service-name">
-            <%= %>
-          </td>
-          <td class="booking-qty">
-            <%= %>
-          </td>
-          <td class="technician-name">
-            <%= %>
-          </td>
-          <td class="schedule">
-            <%= %>
-          </td>
-          <td class="address">
-            <%= %>
-          </td>
-          <td class="status">
-            <%= %>
-          </td>
-        </tr>
-
+        <% bookings.forEach(booking=> { %>
+          <% booking.Services.forEach(service=> { %>
+            <tr>
+              <td class="booking-code">
+                <%= booking.bookingCode %>
+              </td>
+              <td class="service-name">
+                <%= service.name %>
+              </td>
+              <td class="booking-qty">
+                <%= service.BookingService.qty %>
+              </td>
+              <td class="schedule">
+                <%= dayjs(booking.scheduleDate) %>
+              </td>
+              </td>
+              <td class="address">
+                <%= booking.address %>
+              </td>
+              <td class="status">
+                <%= booking.status %>
+              </td>
+            </tr>
+            <% }) %>
+              <% }) %>
       </tbody>
     </table>
-
-    <th>Action</th>
 
     <td class="action">
       <a href="/customer/cart"><button>cart</button></a>

@@ -1,5 +1,5 @@
 const { User, TechnicianProfile, Service, Booking, BookingService } = require("../models");
-const dayjsHelper = require("../helpers/dayjs");
+const { formatDateTime } = require("../helpers/dayjs");
 const currencyHelper = require("../helpers/currency");
 const { Op } = require("sequelize");
 
@@ -60,7 +60,7 @@ class Controller {
 
       res.redirect("/login");
     } catch (error) {
-      res.send(error);
+      res.send(error.message);
     }
   }
 
@@ -94,9 +94,11 @@ class Controller {
 
       res.render("homecustomer", {
         bookings,
-        dayjs: dayjsHelper,
-        currency: currencyHelper,
+        dayjs: formatDateTime,
+        currency: currencyHelper
       });
+
+
 
     } catch (error) {
       res.send(error.message);
@@ -118,22 +120,14 @@ class Controller {
           },
           {
             model: Booking,
-            include: [
-              {
-                model: User, // customer
-              }
-            ]
-          }
+            where: { status: { [Op.in]: ["pending", "accepted", "done"] } },
+            include: [{ model: User }], // customer
+          },
         ],
         order: [["id", "DESC"]],
       });
 
-      res.render("hometechnician", {
-        rows,
-        dayjs: dayjsHelper,
-        currency: currencyHelper,
-      });
-
+      res.render("hometechnician", { rows, dayjs: formatDateTime, currency: currencyHelper });
     } catch (error) {
       res.send(error.message);
     }
@@ -156,8 +150,8 @@ class Controller {
 
       res.render("addbooking", {
         services,
-        dayjs: dayjsHelper,
-        currencyHelper,
+        dayjs: formatDateTime,
+        currency: currencyHelper,
       });
     } catch (error) {
       res.send(error.message);
@@ -168,30 +162,37 @@ class Controller {
     try {
       if (!req.session.userId) return res.redirect("/login");
       if (req.session.role !== "customer") return res.redirect("/login");
-
+  
       const { userId } = req.session;
-
-      const { scheduleDate, address, serviceId, qty } = req.body;
+      const { scheduleDate, address, qty, serviceId } = req.body;
+  
+      const serviceData = await Service.findByPk(serviceId);
+      if (!serviceData) {
+        return res.send("Service tidak ditemukan");
+      }
 
       const booking = await Booking.create({
         customerId: userId,
+        service: serviceData.name, 
         scheduleDate,
         address,
         status: "waiting for payment",
       });
-
+  
       await BookingService.create({
         bookingId: booking.id,
-        serviceId: Number(serviceId),
-        qty: Number(qty)
+        serviceId: serviceData.id,
+        qty: Number(qty),
       });
-
-      res.redirect("/customer")
-
+  
+      res.redirect("/customer");
+  
     } catch (error) {
-      res.send(error)
+      res.send(error);
     }
   }
+  
+
 
   static async showCart(req, res) {
     try {
@@ -213,7 +214,7 @@ class Controller {
 
       res.render("cartpage", {
         cartItems,
-        dayjs: dayjsHelper,
+        dayjs: formatDateTime,
         currency: currencyHelper
       });
 
@@ -295,9 +296,9 @@ class Controller {
       if (!req.session.userId) return res.redirect("/login");
       if (req.session.role !== "customer") return res.redirect("/login");
 
-      const {id} = req.params; //id BookingService
+      const { id } = req.params; //id BookingService
 
-      await BookingService.destroy({where: {id}});
+      await BookingService.destroy({ where: { id } });
 
       res.redirect("/customer/cart");
     } catch (error) {
@@ -305,6 +306,81 @@ class Controller {
     }
   }
 
+  static async handleCheckout(req, res) {
+    try {
+      if (!req.session.userId) return res.redirect("/login");
+      if (req.session.role !== "customer") return res.redirect("/login");
+
+      const { userId } = req.session;
+
+      const cartItems = await BookingService.findAll({
+        include: [
+          {
+            model: Booking,
+            where: { customerId: userId, status: "waiting for payment" },
+          },
+        ],
+      });
+
+      if (cartItems.length === 0) return res.redirect("/customer/cart");
+
+      await Booking.update(
+        { status: "pending" },
+        { where: { customerId: userId, status: "waiting for payment" } }
+      );
+
+      res.redirect("/customer/payment/success");
+
+    } catch (error) {
+      res.send(error.message);
+    }
+  }
+
+  static async showPaymentSuccess(req, res) {
+    try {
+      if (!req.session.userId) return res.redirect("/login");
+      if (req.session.role !== "customer") return res.redirect("/login");
+      res.render("payment");
+    } catch (error) {
+      res.send(error.message);
+    }
+  }
+
+  static async handleUpdateOrderStatus(req, res) {
+    try {
+      if (!req.session.userId) return res.redirect("/login");
+      if (req.session.role !== "technician") return res.redirect("/login");
+
+      const technicianId = req.session.userId;
+      const { bookingId, status } = req.body;
+
+      // Validasi simpel: booking ini memang punya service milik technician ini
+      const row = await BookingService.findOne({
+        where: { bookingId: Number(bookingId) },
+        include: [
+          { model: Service, where: { technicianId } },
+          { model: Booking },
+        ],
+      });
+
+      if (!row) return res.redirect("/technician");
+
+      // Optional: enforce urutan status
+      const current = row.Booking.status;
+      if (current === "pending" && status !== "accepted") return res.redirect("/technician");
+      if (current === "accepted" && status !== "done") return res.redirect("/technician");
+      if (current === "done") return res.redirect("/technician");
+
+      await Booking.update(
+        { status },
+        { where: { id: Number(bookingId) } }
+      );
+
+      res.redirect("/technician");
+    } catch (error) {
+      res.send(error.message);
+    }
+  }
 }
 
 module.exports = Controller;

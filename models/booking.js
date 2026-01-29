@@ -31,10 +31,70 @@ module.exports = (sequelize, DataTypes) => {
   }
   Booking.init({
     customerId: DataTypes.INTEGER,
-    scheduleDate: DataTypes.DATE,
-    address: DataTypes.STRING,
-    status: DataTypes.STRING,
-    bookingCode: DataTypes.STRING
+    technicianprofileId: DataTypes.INTEGER,
+    scheduleDate:{
+      type: DataTypes.DATE,
+      allowNull:false,
+      validate:{
+        notNull: {
+          msg: "scheduleDate required!"
+        },
+        notEmpty: {
+          msg: "scheduleDate required!"
+        },
+
+      },
+    },
+    address:  {
+      type: DataTypes.STRING,
+      allowNull:false,
+      validate:{
+        notNull: {
+          msg: "address required!"
+        },
+        notEmpty: {
+          msg: "address required!"
+        },
+      },
+    },
+    status:  {
+      type: DataTypes.STRING,
+      allowNull:false,
+      validate:{
+        notNull: {
+          msg: "status required!"
+        },
+        notEmpty: {
+          msg: "status required!"
+        },
+
+      },
+    },
+    bookingCode:  {
+      type: DataTypes.STRING,
+      allowNull:false,
+      validate:{
+        notNull: {
+          msg: "bookingCode required!"
+        },
+        notEmpty: {
+          msg: "bookingCode required!"
+        },
+
+      },
+    },
+    service:  {
+      type: DataTypes.STRING,
+      allowNull:false,
+      validate:{
+        notNull: {
+          msg: "service required!"
+        },
+        notEmpty: {
+          msg: "service required!"
+        },
+      },
+    },
   }, {
     sequelize,
     modelName: 'Booking',

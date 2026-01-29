@@ -26,5 +26,18 @@
     "email": "tech2@mail.com",
     "password": "technician456",
     "role": "technician"
+  },{
+    "id": 5,
+    "name": "Jekson",
+    "email": "customer3@mail.com",
+    "password": "customer123",
+    "role": "customer"
+  },
+  {
+    "id": 6,
+    "name": "Petrik",
+    "email": "customer4@mail.com",
+    "password": "customer456",
+    "role": "customer"
   }
 ]
