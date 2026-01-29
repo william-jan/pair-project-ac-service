@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Booking</title>
+</head>
+<body>
+
+    <div class="booking-page">
+        <div class="booking-card">
+
+            <h1 class="booking-title">Add Booking</h1>
+
+            <form action="/bookings/add" method="post" class="booking-form">
+
+                <div class="form-group">
+                    <label for="serviceName" class="form-label">Nama Jasa</label>
+                    <select name="serviceName" id="serviceName" class="form-input" required>
+                        <option value="" disabled selected>Pilih jasa</option>
+                        <option value="<%=  %>"><%=  %></option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="qty" class="form-label">Qty</label>
+                    <input type="number" name="qty" id="qty" class="form-input" placeholder="Jumlah layanan" min="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="technician" class="form-label">Nama Teknisi</label>
+                    <select name="technician" id="technician" class="form-input" required>
+                        <option value="" disabled selected>Pilih teknisi</option>
+                        <option value="<%=  %>"><%=  %></option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="schedule" class="form-label">Schedule</label>
+                    <input type="datetime-local" name="schedule" id="schedule" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="address" class="form-label">Address Booking</label>
+                    <input type="text" name="address" id="address" class="form-input" placeholder="Masukkan alamat" required>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-add-booking">Add Booking</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

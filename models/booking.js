@@ -10,7 +10,23 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      // booking dibuat langsung oleh customer
+      models.Booking.belongsTo(models.User, {
+        foreignKey: "customerId"
+      });
+
+      // M-N ke Service via BookingService
+      models.Booking.belongsToMany(models.Service, {
+        through: models.BookingService,
+        foreignKey: "bookingId",
+        otherKey: "serviceId"
+      });
+
+      
+      models.Booking.hasMany(models.BookingService, {
+        foreignKey: "bookingId"
+      });
+
     }
   }
   Booking.init({
@@ -23,5 +39,13 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Booking',
   });
+
+  Booking.beforeCreate((booking) => {
+    const now = Date.now();
+    const rand = Math.floor(100 + Math.random() * 900)
+
+    booking.bookingCode = `BK-${now}-${rand}`;
+  });
+
   return Booking;
 };

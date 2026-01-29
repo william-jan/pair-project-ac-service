@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart</title>
+</head>
+<body>
+
+    <div class="cart-page">
+        <h1 class="cart-title">My Cart</h1>
+
+        <table class="cart-table" border="1" cellpadding="10">
+            <thead>
+                <tr>
+                    <th>Booking Code</th>
+                    <th>Jasa</th>
+                    <th>Qty</th>
+                    <th>Schedule</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="booking-code"><%=  %></td>
+                    <td class="service-name"><%=  %></td>
+                    <td class="booking-qty"><%=  %></td>
+                    <td class="schedule"><%=  %></td>
+                    <td class="action-buttons">
+                        <button class="btn-edit"><%=  %></button>
+                        <button class="btn-delete"><%=  %></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="cart-total">
+            <p>Total Price: <span class="total-price"><%=  %></span></p>
+        </div>
+
+        <form action="/cart/checkout" method="post" class="checkout-form">
+            <button type="submit" class="btn-checkout">Lanjut Pembayaran</button>
+        </form>
+
+    </div>
+
+</body>
+</html>
