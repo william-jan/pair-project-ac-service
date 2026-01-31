@@ -5,7 +5,7 @@
     "database": "pair_project_ac_db",
     "host": "localhost",
     "dialect": "postgres",
-    "port": 5433
+    "port": 5432
   },
   "test": {
     "username": "root",
